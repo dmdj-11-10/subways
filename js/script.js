@@ -50,7 +50,7 @@ $(document).ready(() => {
     // 메뉴 설명 보기
     var menu = $('#menu ul > li');
 
-    menu.on('mouseenter', function (event) {
+    const menuShow = (event) => {
         var target = event.currentTarget;
 
         $(target).find('.ko_title').stop().animate({
@@ -70,9 +70,9 @@ $(document).ready(() => {
             'bottom': '30px',
             'opacity': '1'
         }, 500)
-    });
+    };
 
-    menu.on('mouseleave', function (event) {
+    const menuHide = (event) => {
         var target = event.currentTarget;
 
         $(target).find('.ko_title').stop().animate({
@@ -92,8 +92,7 @@ $(document).ready(() => {
             'bottom': '100px',
             'opacity': '0'
         }, 500)
-    });
-
+    };
 
     var menuTab = $('#menu-tab ul > li');
 
@@ -122,5 +121,104 @@ $(document).ready(() => {
                 });
             }
         })
-    })
+    });
+
+
+
+
+    // ES5 : var 
+    // ES6 : let(=var, 변수), const(=상수; 변하지 않는 수)
+
+    // const data = {
+    //     'key': 'value',
+    //     'name': 'acs'
+    // }
+
+    // data['name']
+
+
+
+
+
+    const getSandwich = () => {
+
+        // res => res.json
+
+        // function (res) {
+        //     return res.json();
+        // }
+
+
+
+        return fetch('http://localhost:3000/subway/sandwich', {
+            'method': 'GET',
+            'header': {
+                'Contennt-Type': 'application/json'
+            }
+        }).then(res => res)
+        .then(res => res.json());
+    }
+
+
+    const templateSandwichLabel = (label) => {
+        if(label) {
+            return `<div class="label">${label}</div>`;
+        } else {
+            return ``;
+        }
+    }
+
+    const templateSandwichKcal = (kcal) => {
+        if(kcal) {
+            return `<span class="kcal">${kcal}</span>`;
+        } else {
+            return ``;
+        }
+    }
+
+
+    const templateSandwich = (sandwich) => {
+        const {type, label, img, ko_title, en_title, kcal, summary, view_id} = sandwich;
+        return `
+        <li class="cl">
+            <a href="#">
+                ${templateSandwichLabel(label)}
+                <div class="img">
+                    <img src="${img}" alt="${ko_title}">
+                </div>
+                <strong class="ko_title">${ko_title}</strong>
+                <span class="en_title">${en_title}</span>
+                <span class="kcal">${kcal}</span>
+                <p class="desc">${summary}</p>
+                <div class="icon" data-id="${view_id}"></div>
+            </a>
+        </li>
+        `;
+    };
+
+    const listSandwich =  async () => {
+        const sandwiches = await getSandwich();
+        // 방법1 .then
+        // sandwiches.then((data) => {
+        //     console.log(data);
+        // })
+
+
+        // 방법2 async await
+        console.log(sandwiches);
+
+        const menu = document.getElementById('menu');
+        const menuWrap = menu.querySelector('ul');
+
+
+        for(const sandwich of sandwiches) {
+            const node = $(templateSandwich(sandwich))[0];
+            $(node).on('mouseenter', menuShow);
+            $(node).on('mouseleave', menuHide);
+            menuWrap.append(node);
+
+        }
+    };
+
+    listSandwich();
 });
