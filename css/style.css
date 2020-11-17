@@ -385,6 +385,7 @@
 }
 
 #wrap > section #menu-tab > .content > ul {
+    width: 620px;
     display: inline-block;
     position: absolute;
     top: 50%; left: 50%;
